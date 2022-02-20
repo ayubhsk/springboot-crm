@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan(basePackages = {"com.whx.settings.dao","com.whx.workbench.dao"})
 public class SpringbootCrmApplication {
 
+
     public static void main(String[] args) {
         SpringApplication.run(SpringbootCrmApplication.class, args);
     }
