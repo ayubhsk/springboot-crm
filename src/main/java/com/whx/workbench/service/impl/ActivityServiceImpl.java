@@ -62,5 +62,25 @@ public class ActivityServiceImpl implements ActivityService {
 
     }
 
+    @Override
+    public Activity detail(String id) {
+        Activity activity=activityDao.selectActivityById(id);
+        return activity;
+    }
+
+    @Override
+    public int detailDelete(String id) {
+        int count=activityDao.deleteById(id);
+        return count;
+
+    }
+
+    @Override
+    public String selectOwnerId(String id) {
+        String ownerId=activityDao.selectOwnerId(id);
+        return ownerId;
+
+    }
+
 
 }

@@ -20,4 +20,9 @@ public interface ActivityDao {
     Activity selectById(String id);
 
     int update(Activity activity);
+
+    Activity selectActivityById(String id);
+
+
+    String selectOwnerId(String id);
 }

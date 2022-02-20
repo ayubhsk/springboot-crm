@@ -3,6 +3,7 @@ package com.whx.settings.service;
 
 import com.whx.settings.dao.UserDao;
 import com.whx.settings.domain.User;
+import com.whx.workbench.domain.Activity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,4 +27,6 @@ public class UserServiceImpl implements UserService {
         return userList;
 
     }
+
+
 }

@@ -17,4 +17,10 @@ public interface ActivityService {
     Activity selectById(String id);
 
     boolean update(Activity activity);
+
+    Activity detail(String id);
+
+    int detailDelete(String id);
+
+    String selectOwnerId(String id);
 }

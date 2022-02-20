@@ -40,7 +40,8 @@ public class ActivityController {
     @GetMapping("/detail.do")
     public String detail(Model model,String id){
         System.out.println("执行了detail.do方法");
-
+        Activity activity=activityService.detail(id);
+        model.addAttribute("a",activity);
         return "workbench/activity/detail";
     }
 
@@ -88,5 +89,21 @@ public class ActivityController {
         boolean flag=activityService.update(activity);
         return flag;
     }
+
+    @GetMapping("/detailDelete.do")
+    public String detailDelete(String id){
+        int count=activityService.detailDelete(id);
+        return "workbench/activity/index";
+    }
+
+    @GetMapping("/detailEdit.do")
+    @ResponseBody
+    public String detailEdit(String id){
+        System.out.println("执行了detailEdit.do方法，id="+id);
+        String ownerId=activityService.selectOwnerId(id);
+        return ownerId;
+    }
+
+
 
 }
