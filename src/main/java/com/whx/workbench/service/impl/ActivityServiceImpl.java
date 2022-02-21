@@ -2,7 +2,9 @@ package com.whx.workbench.service.impl;
 
 import com.whx.vo.PageVo;
 import com.whx.workbench.dao.ActivityDao;
+import com.whx.workbench.dao.ActivityRemarkDao;
 import com.whx.workbench.domain.Activity;
+import com.whx.workbench.domain.ActivityRemark;
 import com.whx.workbench.service.ActivityService;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Resource
     ActivityDao activityDao;
 
-
+    @Resource
+    ActivityRemarkDao activityRemarkDao;
 
     @Override
     public PageVo<Activity> pageList(Activity activity, Integer pageNo, Integer pageSize) {
@@ -79,6 +82,13 @@ public class ActivityServiceImpl implements ActivityService {
     public String selectOwnerId(String id) {
         String ownerId=activityDao.selectOwnerId(id);
         return ownerId;
+
+    }
+
+    @Override
+    public List<ActivityRemark> showRemarkList(String activityId) {
+        List<ActivityRemark> arList=activityRemarkDao.getByActivityId(activityId);
+        return arList;
 
     }
 

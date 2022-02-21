@@ -6,6 +6,7 @@ import com.whx.utils.DateTimeUtil;
 import com.whx.utils.UUIDUtil;
 import com.whx.vo.PageVo;
 import com.whx.workbench.domain.Activity;
+import com.whx.workbench.domain.ActivityRemark;
 import com.whx.workbench.service.ActivityService;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
@@ -102,6 +103,14 @@ public class ActivityController {
         System.out.println("执行了detailEdit.do方法，id="+id);
         String ownerId=activityService.selectOwnerId(id);
         return ownerId;
+    }
+
+
+    @GetMapping("/showRemarkList.do")
+    @ResponseBody
+    public List<ActivityRemark> showRemarkList(String activityId){
+        List<ActivityRemark> arList=activityService.showRemarkList(activityId);
+        return arList;
     }
 
 
