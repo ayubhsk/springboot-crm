@@ -349,6 +349,7 @@
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-owner">
                                 <option th:each="user:${application.userList}" th:value="${user.id}" th:text="${user.name}"></option>
+
 <!--                                <option>zhangsan</option>
                                 <option>lisi</option>
                                 <option>wangwu</option>-->
@@ -478,14 +479,7 @@
                                     <td>2020-10-10</td>
                                     <td>2020-10-20</td>
                                 </tr>
-                                <tr class="active">
-                                    <td><input type="checkbox"/></td>
-                                    <td><a style="text-decoration: none; cursor: pointer;"
-                                           onclick="window.location.href='detail.html';">发传单</a></td>
-                                    <td>zhangsan</td>
-                                    <td>2020-10-10</td>
-                                    <td>2020-10-20</td>
-                                </tr>
+
                                 -->
                 </tbody>
             </table>
