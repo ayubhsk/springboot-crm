@@ -63,6 +63,7 @@ public class ClueController {
     @PostMapping("/updateClue.do")
     @ResponseBody
     public boolean updateClue(Clue clue,HttpSession session){
+        System.out.println("执行updateClue.do方法");
         clue.setEditTime(DateTimeUtil.getSysTime());
         clue.setEditBy(((User)session.getAttribute("user")).getName());
         boolean flag=clueService.updateClue(clue);
