@@ -66,6 +66,7 @@ public class ClueController {
         clue.setEditTime(DateTimeUtil.getSysTime());
         clue.setEditBy(((User)session.getAttribute("user")).getName());
         boolean flag=clueService.updateClue(clue);
+
         return flag;
     }
 
