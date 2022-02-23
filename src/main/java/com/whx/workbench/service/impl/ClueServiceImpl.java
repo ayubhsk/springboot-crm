@@ -1,14 +1,20 @@
 package com.whx.workbench.service.impl;
 
 import com.whx.excep.CountWrongException;
+import com.whx.utils.UUIDUtil;
 import com.whx.vo.PageVo;
+import com.whx.workbench.dao.ActivityDao;
+import com.whx.workbench.dao.ClueActivityRelationDao;
 import com.whx.workbench.dao.ClueDao;
+import com.whx.workbench.domain.Activity;
 import com.whx.workbench.domain.Clue;
+import com.whx.workbench.domain.ClueActivityRelation;
 import com.whx.workbench.service.ClueService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.lang.invoke.WrongMethodTypeException;
 import java.util.List;
 
 
@@ -16,6 +22,12 @@ import java.util.List;
 public class ClueServiceImpl implements ClueService {
     @Resource
     ClueDao clueDao;
+
+    @Resource
+    ActivityDao activityDao;
+
+    @Resource
+    ClueActivityRelationDao clueActivityRelationDao;
 
     @Override
     public PageVo<Clue> pageList(Clue clue, Integer pageNo, Integer pageSize) {
@@ -66,5 +78,41 @@ public class ClueServiceImpl implements ClueService {
     public boolean updateClue(Clue clue) {
         int count=clueDao.updateClue(clue);
         return count==1;
+    }
+
+    @Override
+    public List<Activity> remarkList(String id) {
+        List<Activity> list=activityDao.remarkList(id);
+        return list;
+
+    }
+
+    @Override
+    public List<Activity> getActivityListByNameAndNotByClueId(String aname, String clueId) {
+        List<Activity> list=activityDao.getActivityListByNameAndNotByClueId(aname, clueId);
+        return list;
+    }
+
+    @Override
+    @Transactional
+    public boolean bundActivity(String[] ids, String clueId) {
+        int count=0;
+        for (int i = 0; i <ids.length ; i++) {
+            ClueActivityRelation car=new ClueActivityRelation();
+            car.setActivityId(ids[i]);
+            car.setClueId(clueId);
+            car.setId(UUIDUtil.getUUID());
+            count+=clueActivityRelationDao.add(car);
+        }
+        if(count!=ids.length) throw new CountWrongException("关联出错");
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean unbund(String activityId, String clueId) {
+        int count=clueActivityRelationDao.unbund(activityId,clueId);
+        if(count!=1) throw new WrongMethodTypeException("解除关联失败");
+        return true;
     }
 }

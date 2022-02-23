@@ -141,4 +141,47 @@
         editBy=#{editBy}
         where id=#{id}
     </update>
+
+
+
+    <select id="remarkList" resultType="com.whx.workbench.domain.Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name,
+        a.startDate,
+        a.endDate,
+        a.cost,
+        a.description,
+        a.createTime,
+        a.createBy,
+        a.editTime,
+        a.editBy
+        from tbl_activity a
+        join tbl_user u
+        on a.owner=u.id
+        join tbl_clue_activity_relation cr
+        on #{id}=cr.clueId
+        where a.id =cr.activityId
+		order by a.createTime
+    </select>
+    <select id="getActivityListByNameAndNotByClueId" resultType="com.whx.workbench.domain.Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name,
+        a.startDate,
+        a.endDate,
+        a.cost,
+        a.description,
+        a.createTime,
+        a.createBy,
+        a.editTime,
+        a.editBy
+        from tbl_activity a
+        join tbl_user u
+        on a.owner=u.id
+		where a.id not in (select activityId from tbl_clue_activity_relation where clueId =#{clueId})
+        and a.name like '%' #{aname} '%'
+    </select>
 </mapper>

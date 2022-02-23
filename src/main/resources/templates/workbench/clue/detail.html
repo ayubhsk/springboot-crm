@@ -22,6 +22,17 @@
 	var cancelAndSaveBtnDefault = true;
 	
 	$(function(){
+
+		$("#qx").click(function () {
+			$("input[name=xz]").prop("checked", this.checked)
+		})
+
+		$("#activitySearchBody").on("click",$("input[name=xz]"),function () {
+			$("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked").length)
+		})
+
+
+
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
 				//设置remarkDiv的高度为130px
@@ -55,8 +66,142 @@
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+
+
+		//展示相关联的市场活动
+		showActivityList()
+
+
+		//为关联市场活动模态窗口中的 搜索框 绑定事件，通过触发回车键，查询并展现所需市场活动列表
+		$("#aname").keydown(function (event) {
+
+			//如果是回车键
+			if(event.keyCode==13){
+
+				//alert("查询并展现市场活动列表");
+
+				$.ajax({
+
+					url : "workbench/clue/getActivityListByNameAndNotByClueId.do",
+					data : {
+
+						"aname" : $.trim($("#aname").val()),
+						"clueId" : "[[${c.id}]]"
+
+					},
+					type : "get",
+					dataType : "json",
+					success : function (data) {
+						var html = "";
+						$.each(data,function (i,n) {
+							html += '<tr>';
+							html += '<td><input type="checkbox" name="xz" value="'+n.id+'"/></td>';
+							html += '<td>'+n.name+'</td>';
+							html += '<td>'+n.startDate+'</td>';
+							html += '<td>'+n.endDate+'</td>';
+							html += '<td>'+n.owner+'</td>';
+							html += '</tr>';
+
+						})
+
+						$("#activitySearchBody").html(html);
+					}
+				})
+
+				//展现完列表后，记得将模态窗口默认的回车行为禁用掉
+				return false;
+
+			}
+
+		})
+
 	});
-	
+
+
+	function showActivityList() {
+		var clueId='[[${c.id}]]'
+		$.ajax({
+
+			url : "workbench/clue/showActivityList.do",
+			data : {
+				"id":clueId,
+			},
+			type : "get",
+			dataType : "json",
+			success : function (data) {
+				var html=""
+				console.log(data)
+				$.each(data,function (i,n) {//返回的data是市场活动
+					html+='<tr>'
+					html+='<td>'+n.name+'</td>'
+					html+='<td>'+n.startDate+'</td>'
+					html+='<td>'+n.endDate+'</td>'
+					html+='<td>'+n.owner+'</td>'
+					html+='<td><a href="javascript:void(0);" onclick="unbund(\''+n.id+'\')" style="text-decoration: none;">'
+					html+='<span class="glyphicon glyphicon-remove"></span>解除关联</a></td>'
+					html+='</tr>'
+				})
+				console.log(html)
+				$("#activityBody").html(html)
+			}
+
+		})
+	}
+
+	function unbund(activityId) {
+		$.ajax({
+
+			url : "workbench/clue/unbund.do",
+			data : {
+				"activityId":activityId,
+				"clueId":'[[${c.id}]]'
+			},
+			type : "get",
+			dataType : "json",
+			success : function (data) {
+				if(data){
+					showActivityList()
+				}
+			}
+
+		})
+	}
+	function bund(activityId) {
+		//找出所有还没有关联的市场活动
+		$("#bundModal").modal("show")
+	}
+
+	function bundActivityClick() {
+		var $xz=$("input[name=xz]:checked")
+		if($xz.length==0){
+			alert("至少选一个")
+			return
+		}
+		var param=""
+		for (let i = 0; i <$xz.length ; i++) {
+			if(i!=$xz.length-1){
+				param+=$xz[i].value+","
+			}else {
+				param+=$xz[i].value
+			}
+		}
+		$.ajax({
+			url : "workbench/clue/bundActivity.do",
+			data : {
+				"ids":param,
+				"clueId":'[[${c.id}]]'
+			},
+			type : "post",
+			dataType : "json",
+			success : function (data) {
+				if(data){
+					showActivityList()
+					$("#bundModal").modal("hide")
+				}
+			}
+
+		})
+	}
 </script>
 
 </head>
@@ -76,7 +221,7 @@
 					<div class="btn-group" style="position: relative; top: 18%; left: 8px;">
 						<form class="form-inline" role="form">
 						  <div class="form-group has-feedback">
-						    <input type="text" class="form-control" style="width: 300px;" placeholder="请输入市场活动名称，支持模糊查询">
+						    <input type="text" class="form-control" style="width: 300px;" id="aname" placeholder="请输入市场活动名称，支持模糊查询">
 						    <span class="glyphicon glyphicon-search form-control-feedback"></span>
 						  </div>
 						</form>
@@ -84,7 +229,7 @@
 					<table id="activityTable" class="table table-hover" style="width: 900px; position: relative;top: 10px;">
 						<thead>
 							<tr style="color: #B3B3B3;">
-								<td><input type="checkbox"/></td>
+								<td><input type="checkbox" id="qx"/></td>
 								<td>名称</td>
 								<td>开始日期</td>
 								<td>结束日期</td>
@@ -92,27 +237,20 @@
 								<td></td>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
+						<tbody id="activitySearchBody">
+<!--							<tr>
 								<td><input type="checkbox"/></td>
 								<td>发传单</td>
 								<td>2020-10-10</td>
 								<td>2020-10-20</td>
 								<td>zhangsan</td>
-							</tr>
-							<tr>
-								<td><input type="checkbox"/></td>
-								<td>发传单</td>
-								<td>2020-10-10</td>
-								<td>2020-10-20</td>
-								<td>zhangsan</td>
-							</tr>
+							</tr>-->
 						</tbody>
 					</table>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">关联</button>
+					<button type="button" class="btn btn-primary" id="bundActivityBtn" onclick="bundActivityClick()">关联</button>
 				</div>
 			</div>
 		</div>
@@ -385,7 +523,7 @@
 		
 		<!-- 备注1 -->
 		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
+			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
 				<h5>哎呦！</h5>
 				<font color="gray">线索</font> <font color="gray">-</font> <b>李四先生-动力节点</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
@@ -396,20 +534,7 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- 备注2 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="../../image/user-thumbnail.png" style="width: 30px; height:30px;">
-			<div style="position: relative; top: -40px; left: 40px;" >
-				<h5>呵呵！</h5>
-				<font color="gray">线索</font> <font color="gray">-</font> <b>李四先生-动力节点</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
-				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-				</div>
-			</div>
-		</div>
+
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
@@ -439,27 +564,21 @@
 							<td></td>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
+					<tbody id="activityBody">
+<!--						<tr>
 							<td>发传单</td>
 							<td>2020-10-10</td>
 							<td>2020-10-20</td>
 							<td>zhangsan</td>
 							<td><a href="javascript:void(0);"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
-						</tr>
-						<tr>
-							<td>发传单</td>
-							<td>2020-10-10</td>
-							<td>2020-10-20</td>
-							<td>zhangsan</td>
-							<td><a href="javascript:void(0);"  style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a></td>
-						</tr>
+						</tr>-->
+
 					</tbody>
 				</table>
 			</div>
 			
 			<div>
-				<a href="javascript:void(0);" data-toggle="modal" data-target="#bundModal" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
+				<a href="javascript:void(0);"  onclick="bund()" style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
 			</div>
 		</div>
 	</div>

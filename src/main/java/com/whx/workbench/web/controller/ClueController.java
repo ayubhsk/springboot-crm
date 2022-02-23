@@ -4,6 +4,7 @@ import com.whx.settings.domain.User;
 import com.whx.utils.DateTimeUtil;
 import com.whx.utils.UUIDUtil;
 import com.whx.vo.PageVo;
+import com.whx.workbench.domain.Activity;
 import com.whx.workbench.domain.Clue;
 import com.whx.workbench.service.ClueService;
 import org.springframework.boot.web.servlet.server.Session;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/workbench/clue")
@@ -71,5 +73,32 @@ public class ClueController {
         return flag;
     }
 
+    @GetMapping("/showActivityList.do")
+    @ResponseBody
+    public List<Activity> remarkList(String id){
+        List<Activity> list=clueService.remarkList(id);
+        return list;
+    }
+
+    @GetMapping("/getActivityListByNameAndNotByClueId.do")
+    @ResponseBody
+    public List<Activity> getActivityListByNameAndNotByClueId(String aname,String clueId){
+        List<Activity> list=clueService.getActivityListByNameAndNotByClueId(aname,clueId);
+        return list;
+    }
+
+
+    @PostMapping("bundActivity.do")
+    @ResponseBody
+    public boolean bundActivity(String[] ids,String clueId){
+        boolean flag=clueService.bundActivity(ids,clueId);
+        return flag;
+    }
+    @GetMapping("unbund.do")
+    @ResponseBody
+    public boolean unbund(String activityId,String clueId){
+        boolean flag=clueService.unbund(activityId,clueId);
+        return flag;
+    }
 
 }

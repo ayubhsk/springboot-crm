@@ -25,4 +25,8 @@ public interface ActivityDao {
 
 
     String selectOwnerId(String id);
+
+    List<Activity> remarkList(String id);
+
+    List<Activity> getActivityListByNameAndNotByClueId(String aname, String clueId);
 }
