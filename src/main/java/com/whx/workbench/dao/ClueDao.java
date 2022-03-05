@@ -18,4 +18,6 @@ public interface ClueDao {
     Clue getByIdNoChange(String id);
 
     int updateClue(Clue clue);
+
+    String getOwnerIdById(String id);
 }

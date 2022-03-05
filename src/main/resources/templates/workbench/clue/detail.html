@@ -23,6 +23,15 @@
 	
 	$(function(){
 
+		$(".time").datetimepicker({
+			minView: "month",
+			language: 'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "top-left"
+		});
+
 		$("#qx").click(function () {
 			$("input[name=xz]").prop("checked", this.checked)
 		})
@@ -71,23 +80,29 @@
 		//展示相关联的市场活动
 		showActivityList()
 
+		//展示备注列表
+		showRemarkList()
+
+
+		//页面加载完备后，加载备注信息
+		$("#remarkBody").on("mouseover",".remarkDiv",function(){
+			$(this).children("div").children("div").show();
+		})
+		$("#remarkBody").on("mouseout",".remarkDiv",function(){
+			$(this).children("div").children("div").hide();
+		})
 
 		//为关联市场活动模态窗口中的 搜索框 绑定事件，通过触发回车键，查询并展现所需市场活动列表
 		$("#aname").keydown(function (event) {
 
 			//如果是回车键
 			if(event.keyCode==13){
-
 				//alert("查询并展现市场活动列表");
-
 				$.ajax({
-
 					url : "workbench/clue/getActivityListByNameAndNotByClueId.do",
 					data : {
-
 						"aname" : $.trim($("#aname").val()),
 						"clueId" : "[[${c.id}]]"
-
 					},
 					type : "get",
 					dataType : "json",
@@ -202,6 +217,136 @@
 
 		})
 	}
+	function deleteBtnClick() {
+		window.location.href="workbench/clue/delete.do?id=[[${c.id}]]"
+
+	}
+	
+	function updateClick() {
+		$.ajax({
+			url : "workbench/clue/update.do",
+			data : {
+				"id":'[[${c.id}]]',
+				"fullname":$.trim($("#edit-fullname").val()),
+				"appellation":$.trim($("#edit-appellation").val()),
+				"owner":$.trim($("#edit-owner").val()),
+				"company":$.trim($("#edit-company").val()),
+				"job":$.trim($("#edit-job").val()),
+				"email":$.trim($("#edit-email").val()),
+				"phone":$.trim($("#edit-phone").val()),
+				"website":$.trim($("#edit-website").val()),
+				"mphone":$.trim($("#edit-mphone").val()),
+				"state":$.trim($("#edit-state").val()),
+				"source":$.trim($("#edit-source").val()),
+				"description":$.trim($("#edit-description").val()),
+				"contactSummary":$.trim($("#edit-contactSummary").val()),
+				"nextContactTime":$.trim($("#edit-nextContactTime").val()),
+				"address":$.trim($("#edit-address").val())
+			},
+			type : "post",
+			dataType : "json",
+			success : function (data) {
+				if(data){
+					//重新加载这个页面
+					window.location.href="workbench/clue/detail.do?id=[[${c.id}]]"
+				}
+			}
+		})
+
+	}
+
+	function showRemarkList() {
+		$.ajax({
+			url : "workbench/clue/remarkList.do",
+			data : {
+				"clueId":'[[${c.id}]]'
+			},
+			type : "get",
+			dataType : "json",
+			success : function (data) {//返回的是clueRemark对象
+				var html=""
+				$.each(data,function (i,n) {
+					html+='<div class="remarkDiv" style="height: 60px;" id="r'+n.id+'">'
+					html+='<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">'
+					html+='<div style="position: relative; top: -40px; left: 40px;" >'
+					html+='<h5>'+n.noteContent+'</h5>'
+					html+='<font color="gray">线索</font> <font color="gray">-</font> <b>[[${c.fullname}]]-[[${c.company}]]</b> <small style="color: gray;">'+(n.editFlag==0? n.createTime:n.editTime)+'由'+(n.editFlag==0? n.createBy:n.editBy)+'</small>'
+					html+='<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">'
+					html+='<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: red;"></span></a>'
+					html+='&nbsp;&nbsp;&nbsp;&nbsp;'
+					html+='<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+n.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: red;"></span></a>'
+					html+='</div>'
+					html+='</div>'
+					html+='</div>'
+				})
+				$("#remarkPosition").after(html)
+
+			}
+
+		})
+	}
+
+	function deleteRemark(id) {
+		var remarkId="r"+id
+		$.ajax({
+			url : "workbench/clue/deleteRemark.do",
+			data : {
+				"id":id
+			},
+			type : "get",
+			dataType : "json",
+			success : function (data) {
+				if(data){
+					$("#"+remarkId).remove()
+				}
+			}
+
+		})
+	}
+
+	function saveRemarkClick() {
+		var noteContent=$.trim($("#remark").val())
+		if(noteContent==""){
+			alert("备注不能为空")
+			return
+		}
+		$.ajax({
+			url : "workbench/clue/saveRemark.do",
+			data : {
+				"noteContent":noteContent,
+				"clueId":'[[${c.id}]]'
+			},
+			type : "get",
+			dataType : "json",
+			success : function (data) {//返回的是clueRemark对象
+				var html=""
+				var n=data
+					html+='<div class="remarkDiv" style="height: 60px;" id="r'+n.id+'">'
+					html+='<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">'
+					html+='<div style="position: relative; top: -40px; left: 40px;" >'
+					html+='<h5>'+n.noteContent+'</h5>'
+					html+='<font color="gray">线索</font> <font color="gray">-</font> <b>[[${c.fullname}]]-[[${c.company}]]</b> <small style="color: gray;">'+(n.editFlag==0? n.createTime:n.editTime)+'由'+(n.editFlag==0? n.createBy:n.editBy)+'</small>'
+					html+='<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">'
+					html+='<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: red;"></span></a>'
+					html+='&nbsp;&nbsp;&nbsp;&nbsp;'
+					html+='<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+n.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: red;"></span></a>'
+					html+='</div>'
+					html+='</div>'
+					html+='</div>'
+
+				$("#remarkPosition").after(html)
+
+			}
+
+		})
+	}
+
+	function convert(clueId,ownerId) {
+
+		var param="id="+clueId+"&ownerId="+ownerId
+		window.location.href="workbench/clue/convert.do?"+param
+	}
+
 </script>
 
 </head>
@@ -249,7 +394,7 @@
 					</table>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal" >取消</button>
 					<button type="button" class="btn btn-primary" id="bundActivityBtn" onclick="bundActivityClick()">关联</button>
 				</div>
 			</div>
@@ -272,105 +417,81 @@
                         <div class="form-group">
                             <label for="edit-clueOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <select class="form-control" id="edit-clueOwner">
-                                    <option>zhangsan</option>
-                                    <option>lisi</option>
-                                    <option>wangwu</option>
+                                <select class="form-control" id="edit-owner" value="">
+                                    <option th:each="user:${application.userList}" th:selected="${ownerId eq user.id}" th:value="${user.id}" >[[${user.name}]]</option>
                                 </select>
                             </div>
                             <label for="edit-company" class="col-sm-2 control-label">公司<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-company" value="动力节点">
+                                <input type="text" class="form-control" id="edit-company" th:value="${c.company}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-call" class="col-sm-2 control-label">称呼</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <select class="form-control" id="edit-call">
-                                    <option></option>
-                                    <option selected>先生</option>
-                                    <option>夫人</option>
-                                    <option>女士</option>
-                                    <option>博士</option>
-                                    <option>教授</option>
-                                </select>
+								<select class="form-control" name="appellation" id="edit-appellation" th:value="${c.appellation}">
+									<option></option>
+									<option th:each="appellation:${application.appellationList}" th:selected="${c.appellation eq appellation.value}" th:value="${appellation.value}" th:text="${appellation.text}">
+								</select>
                             </div>
                             <label for="edit-surname" class="col-sm-2 control-label">姓名<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-surname" value="李四">
+                                <input type="text" class="form-control" id="edit-fullname" th:value="${c.fullname}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-job" class="col-sm-2 control-label">职位</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-job" value="CTO">
+                                <input type="text" class="form-control" id="edit-job" th:value="${c.job}">
                             </div>
                             <label for="edit-email" class="col-sm-2 control-label">邮箱</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-email" value="lisi@bjpowernode.com">
+                                <input type="text" class="form-control" id="edit-email" th:value="${c.email}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-phone" class="col-sm-2 control-label">公司座机</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-phone" value="010-84846003">
+                                <input type="text" class="form-control" id="edit-phone" th:value="${c.phone}">
                             </div>
                             <label for="edit-website" class="col-sm-2 control-label">公司网站</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-website" value="http://www.bjpowernode.com">
+                                <input type="text" class="form-control" id="edit-website" th:value="${c.website}">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-mphone" class="col-sm-2 control-label">手机</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-mphone" value="12345678901">
+                                <input type="text" class="form-control" id="edit-mphone" th:value="${c.mphone}">
                             </div>
                             <label for="edit-status" class="col-sm-2 control-label">线索状态</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <select class="form-control" id="edit-status">
-                                    <option></option>
-                                    <option>试图联系</option>
-                                    <option>将来联系</option>
-                                    <option selected>已联系</option>
-                                    <option>虚假线索</option>
-                                    <option>丢失线索</option>
-                                    <option>未联系</option>
-                                    <option>需要条件</option>
-                                </select>
+								<select class="form-control" name="state" id="edit-state" th:value="${c.state}">
+									<option></option>
+									<option th:each="clueState:${application.clueStateList}"  th:selected="${c.state eq clueState.value}"  th:value="${clueState.value}" th:text="${clueState.text}"></option>
+
+								</select>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-source" class="col-sm-2 control-label">线索来源</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <select class="form-control" id="edit-source">
-                                    <option></option>
-                                    <option selected>广告</option>
-                                    <option>推销电话</option>
-                                    <option>员工介绍</option>
-                                    <option>外部介绍</option>
-                                    <option>在线商场</option>
-                                    <option>合作伙伴</option>
-                                    <option>公开媒介</option>
-                                    <option>销售邮件</option>
-                                    <option>合作伙伴研讨会</option>
-                                    <option>内部研讨会</option>
-                                    <option>交易会</option>
-                                    <option>web下载</option>
-                                    <option>web调研</option>
-                                    <option>聊天</option>
-                                </select>
+								<select class="form-control" name="source" id="edit-source" th:value="${c.source}">
+									<option></option>
+									<option th:each="source:${application.sourceList}" th:selected="${c.source eq source.value}" th:value="${source.value}" th:text="${source.text}">
+								</select>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="edit-describe" class="col-sm-2 control-label">描述</label>
                             <div class="col-sm-10" style="width: 81%;">
-                                <textarea class="form-control" rows="3" id="edit-describe">这是一条线索的描述信息</textarea>
+                                <textarea class="form-control" rows="3" id="edit-description" th:text="${c.description}"></textarea>
                             </div>
                         </div>
 
@@ -380,13 +501,13 @@
                             <div class="form-group">
                                 <label for="edit-contactSummary" class="col-sm-2 control-label">联系纪要</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="3" id="edit-contactSummary">这个线索即将被转换</textarea>
+                                    <textarea class="form-control" rows="3" id="edit-contactSummary" th:text="${c.contactSummary}"></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="edit-nextContactTime" class="col-sm-2 control-label">下次联系时间</label>
                                 <div class="col-sm-10" style="width: 300px;">
-                                    <input type="text" class="form-control" id="edit-nextContactTime" value="2017-05-01">
+                                    <input type="text" class="form-control time" id="edit-nextContactTime" th:value="${c.nextContactTime}">
                                 </div>
                             </div>
                         </div>
@@ -397,7 +518,7 @@
                             <div class="form-group">
                                 <label for="edit-address" class="col-sm-2 control-label">详细地址</label>
                                 <div class="col-sm-10" style="width: 81%;">
-                                    <textarea class="form-control" rows="1" id="edit-address">北京大兴区大族企业湾</textarea>
+                                    <textarea class="form-control" rows="1" id="edit-address" th:text="${c.address}"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -406,7 +527,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+                    <button type="button" class="btn btn-primary" id="updateBtn" onclick="updateClick()">更新</button>
                 </div>
             </div>
         </div>
@@ -420,12 +541,12 @@
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
-			<h3>[[${c.fullname+c.appellation}]] <small>[[${c.company}]]</small></h3>
+			<h3 th:text="${c.fullname+c.appellation}"> <small>[[${c.company}]]</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" onclick="window.location.href='convert.html';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+			<button type="button" class="btn btn-default"  th:onclick="convert([[${c.id}]],[[${ownerId}]])"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
-			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+			<button type="button" class="btn btn-danger" id="deleteBtn" onclick="deleteBtnClick()"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>
 	</div>
 	
@@ -516,13 +637,13 @@
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 40px; left: 40px;">
-		<div class="page-header">
+	<div style="position: relative; top: 40px; left: 40px;" id="remarkBody">
+		<div class="page-header" id="remarkPosition">
 			<h4>备注</h4>
 		</div>
 		
 		<!-- 备注1 -->
-		<div class="remarkDiv" style="height: 60px;">
+<!--		<div class="remarkDiv" style="height: 60px;">
 			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
 				<h5>哎呦！</h5>
@@ -533,15 +654,15 @@
 					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
 				</div>
 			</div>
-		</div>
+		</div>-->
 
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
-					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button id="cancelBtn" type="button" class="btn btn-default" onclick="$('#remark').val('')">取消</button>
+					<button type="button" class="btn btn-primary" id="saveRemak" onclick="saveRemarkClick()">保存</button>
 				</p>
 			</form>
 		</div>

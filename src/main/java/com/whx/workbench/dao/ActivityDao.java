@@ -5,7 +5,11 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * @author Mr.Wang
+ */
 public interface ActivityDao {
+
 
     List<Activity> getAll();
 
@@ -29,4 +33,6 @@ public interface ActivityDao {
     List<Activity> remarkList(String id);
 
     List<Activity> getActivityListByNameAndNotByClueId(String aname, String clueId);
+
+    List<Activity> selectListLikeName(String aName);
 }

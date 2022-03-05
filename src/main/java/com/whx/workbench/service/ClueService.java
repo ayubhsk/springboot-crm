@@ -1,8 +1,11 @@
 package com.whx.workbench.service;
 
+import com.whx.settings.domain.User;
 import com.whx.vo.PageVo;
 import com.whx.workbench.domain.Activity;
 import com.whx.workbench.domain.Clue;
+import com.whx.workbench.domain.ClueRemark;
+import com.whx.workbench.domain.Tran;
 
 import java.util.List;
 
@@ -27,4 +30,18 @@ public interface ClueService {
     boolean bundActivity(String[] ids, String clueId);
 
     boolean unbund(String activityId, String clueId);
+
+    boolean deleteCAR(String id);
+
+    String getOwnerIdBy(String id);
+
+    List<ClueRemark> showRemarkList(String clueId);
+
+    boolean deleteRemark(String id);
+
+    boolean saveRemark(ClueRemark clueRemark);
+
+    List<Activity> getActivityListByName(String aName);
+
+    boolean convertCLue(String flag, String clueId, Tran tran, User user);
 }

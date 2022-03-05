@@ -16,7 +16,26 @@
 	<link rel="stylesheet" type="text/css" href="jquery/bs_pagination/jquery.bs_pagination.min.css">
 	<script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
 	<script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
+	<script src="vue/vue-2.4.0.js"></script>
+
+	<style>
+		.v-enter,.v-leave-to{
+			opacity: 0;
+
+			/*transform: opacity*/
+			transform: translateX(20px);
+
+		}
+		.v-enter-active,.v-leave-active{
+			transition: all 0.8s ease;
+
+		}
+	</style>
 <script type="text/javascript">
+
+
+
+
 
 	$(function(){
 		pageList(1,4)
@@ -104,7 +123,6 @@
 		})
 	}
 	function saveBtnClick() {
-
 		$.ajax({
 
 			url : "workbench/clue/save.do",
@@ -531,9 +549,6 @@
 	
 
 
-
-
-
 	<div>
 		<div style="position: relative; left: 10px; top: -10px;">
 			<div class="page-header">
@@ -542,7 +557,7 @@
 		</div>
 	</div>
 
-	<div style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
+	<div id="app" style="position: relative; top: -20px; left: 0px; width: 100%; height: 100%;">
 
 		<div style="width: 100%; position: absolute;top: 5px; left: 10px;">
 
@@ -615,13 +630,14 @@
 				</form>
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 40px;">
-				<div class="btn-group" style="position: relative; top: 18%;">
+				<transition>
+				<div class="btn-group" style="position: relative; top: 18%;" v-if="flag">
 				  <button type="button" class="btn btn-primary" id="createBtn" onclick="createBtnClick()"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" id="updateBtn" onclick="updateBtnClick()"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger" id="deleteBtn" onclick="deleteBtnClick()"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
-
-
+				</transition>
+				<input type="button" value="btn" @click="flag=!flag">
 			</div>
 			<div style="position: relative;top: 50px;">
 				<table class="table table-hover">
@@ -662,4 +678,18 @@
 
 	</div>
 </body>
+
+
+<script type="text/javascript">
+	var vm = new Vue({
+		el : "#app",
+		data : {
+			"flag" : true
+		},
+		methods:{
+
+		}
+
+	})
+</script>
 </html>

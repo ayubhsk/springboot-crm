@@ -3,11 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.whx.workbench.dao.ActivityDao">
-
-
-
     <select id="getAll" resultType="com.whx.workbench.domain.Activity">
-        select * from tbl_activity
+        select *
+        from tbl_activity
     </select>
 
     <select id="pageList" resultType="com.whx.workbench.domain.Activity">
@@ -27,7 +25,6 @@
         join tbl_user u
         on a.owner=u.id
         <where>
-
             <if test="activity.name!=null and activity.name!=''">
                 a.name like '%' #{activity.name} '%'
             </if>
@@ -70,118 +67,135 @@
     </select>
 
     <delete id="deleteById">
-        delete from tbl_activity where id=#{id}
+        delete
+        from tbl_activity
+        where id = #{id}
     </delete>
 
 
     <insert id="save">
-        insert into tbl_activity(
-            id,
-            owner,
-            name,
-            startDate,
-            endDate,
-            cost,
-            description,
-            createTime,
-            createBy,
-            editTime,
-            editBy
-        )values (
-            #{id},
-            #{owner},
-            #{name},
-            #{startDate},
-            #{endDate},
-            #{cost},
-            #{description},
-            #{createTime},
-            #{createBy},
-            #{editTime},
-            #{editBy}
-        )
+        insert into tbl_activity(id,
+                                 owner,
+                                 name,
+                                 startDate,
+                                 endDate,
+                                 cost,
+                                 description,
+                                 createTime,
+                                 createBy,
+                                 editTime,
+                                 editBy)
+        values (#{id},
+                #{owner},
+                #{name},
+                #{startDate},
+                #{endDate},
+                #{cost},
+                #{description},
+                #{createTime},
+                #{createBy},
+                #{editTime},
+                #{editBy})
     </insert>
 
 
     <select id="selectById" resultType="com.whx.workbench.domain.Activity">
-        select * from tbl_activity where id=#{id}
+        select *
+        from tbl_activity
+        where id = #{id}
     </select>
     <select id="selectActivityById" resultType="com.whx.workbench.domain.Activity">
-        select
-        a.id,
-        u.name as owner,
-        a.name,
-        a.startDate,
-        a.endDate,
-        a.cost,
-        a.description,
-        a.createTime,
-        a.createBy,
-        a.editTime,
-        a.editBy
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate,
+               a.cost,
+               a.description,
+               a.createTime,
+               a.createBy,
+               a.editTime,
+               a.editBy
         from tbl_activity a
-        join tbl_user u
-        on a.owner=u.id
-        where a.id=#{id}
+                     join tbl_user u
+                on a.owner = u.id
+        where a.id = #{id}
     </select>
     <select id="selectOwnerId" resultType="java.lang.String">
-        select owner from tbl_activity where id=#{id}
+        select owner
+        from tbl_activity
+        where id = #{id}
     </select>
 
 
     <update id="update">
-        update tbl_activity set
-        owner=#{owner},
-        name=#{name},
-        startDate=#{startDate},
-        endDate=#{endDate},
-        cost=#{cost},
-        description=#{description},
-        editTime=#{editTime},
-        editBy=#{editBy}
-        where id=#{id}
+        update tbl_activity
+        set owner=#{owner},
+            name=#{name},
+            startDate=#{startDate},
+            endDate=#{endDate},
+            cost=#{cost},
+            description=#{description},
+            editTime=#{editTime},
+            editBy=#{editBy}
+        where id = #{id}
     </update>
 
 
-
     <select id="remarkList" resultType="com.whx.workbench.domain.Activity">
-        select
-        a.id,
-        u.name as owner,
-        a.name,
-        a.startDate,
-        a.endDate,
-        a.cost,
-        a.description,
-        a.createTime,
-        a.createBy,
-        a.editTime,
-        a.editBy
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate,
+               a.cost,
+               a.description,
+               a.createTime,
+               a.createBy,
+               a.editTime,
+               a.editBy
         from tbl_activity a
-        join tbl_user u
-        on a.owner=u.id
-        join tbl_clue_activity_relation cr
-        on #{id}=cr.clueId
-        where a.id =cr.activityId
-		order by a.createTime
+                     join tbl_user u
+                on a.owner = u.id
+                     join tbl_clue_activity_relation cr
+                on #{id} = cr.clueId
+        where a.id = cr.activityId
+        order by a.createTime
     </select>
     <select id="getActivityListByNameAndNotByClueId" resultType="com.whx.workbench.domain.Activity">
-        select
-        a.id,
-        u.name as owner,
-        a.name,
-        a.startDate,
-        a.endDate,
-        a.cost,
-        a.description,
-        a.createTime,
-        a.createBy,
-        a.editTime,
-        a.editBy
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate,
+               a.cost,
+               a.description,
+               a.createTime,
+               a.createBy,
+               a.editTime,
+               a.editBy
         from tbl_activity a
         join tbl_user u
-        on a.owner=u.id
-		where a.id not in (select activityId from tbl_clue_activity_relation where clueId =#{clueId})
-        and a.name like '%' #{aname} '%'
+        on a.owner = u.id
+        where (a.id not in (select activityId from tbl_clue_activity_relation where clueId = #{clueId})
+                and a.name like '%' #{aname} '%')
+    </select>
+
+    <select id="selectListLikeName" resultType="com.whx.workbench.domain.Activity">
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate,
+               a.cost,
+               a.description,
+               a.createTime,
+               a.createBy,
+               a.editTime,
+               a.editBy
+        from tbl_activity a
+        join tbl_user u
+        on a.owner = u.id
+        where a.name like '%' #{aName} '%'
     </select>
 </mapper>

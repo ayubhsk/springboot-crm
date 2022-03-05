@@ -1,20 +1,29 @@
-<!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
+	<meta charset="UTF-8">
+	<base th:href="${#request.getScheme()}+'://'+${#request.getServerName()}+ ':' + ${#request.getServerPort()} + ${#request.getContextPath()} + '/'">
+	<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+	<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
+		  rel="stylesheet"/>
 
-<link href="../../jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="../../jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-
-<script type="text/javascript" src="../../jquery/jquery-1.11.1-min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="../../jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
-
+	<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
+	<script type="text/javascript"
+			src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+	<script type="text/javascript"
+			src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 <script type="text/javascript">
 
 	$(function(){
-		
+
+		$(".time").datetimepicker({
+			minView: "month",
+			language: 'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "bottom-left"
+		});
 		//定制字段
 		$("#definedColumns > li").click(function(e) {
 			//防止下拉菜单消失
@@ -22,7 +31,47 @@
 	    });
 		
 	});
-	
+	function pageList(pageNo, pageSize) {
+
+		$.ajax({
+			url: "workbench/contacts/pageList.do",
+			data: {
+				"name": $("#hidden-name").val(),
+				"owner": $("#hidden-owner").val(),
+				"startDate": $("#hidden-startDate").val(),
+				"endDate": $("#hidden-endDate").val(),
+				"pageNo": pageNo,
+				"pageSize": pageSize
+			},
+			type: "post",
+			dataType: "json",
+			success: function (pageInfo) {
+
+				var base=document.getElementById("base").getAttribute("href")
+				//重新加载显示分页数据的容器
+				$("#loadDiv").load(base+"test/index.html #loadDiv");
+
+				$("#activityPage").bs_pagination({
+					currentPage: pageNo, // 页码
+					rowsPerPage: pageSize, // 每页显示的记录条数
+					maxRowsPerPage: 20, // 每页最多显示的记录条数
+					totalPages: pageInfo.pages, // 总页数
+					totalRows: pageInfo.total, // 总记录条数
+					visiblePageLinks: 3, // 显示几个卡片
+					showGoToPage: true,
+					showRowsPerPage: true,
+					showRowsInfo: true,
+					showRowsDefaultInfo: true,
+					//该回调函数时在，点击分页组件的时候触发的
+					onChangePage: function (event, data) {
+						pageList(data.currentPage, data.rowsPerPage);
+					}
+				});
+
+			}
+
+		})
+	}
 </script>
 </head>
 <body>
@@ -265,7 +314,7 @@
 					<tbody>
 						<tr>
 							<td><input type="checkbox" /></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">动力节点</a></td>
+							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/customer/detail.html';">动力节点</a></td>
 							<td>zhangsan</td>
 							<td>010-84846003</td>
 							<td>http://www.bjpowernode.com</td>

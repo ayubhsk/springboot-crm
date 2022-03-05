@@ -164,4 +164,7 @@
     <select id="getByIdNoChange" resultType="com.whx.workbench.domain.Clue">
         select * from tbl_clue where id=#{id}
     </select>
+    <select id="getOwnerIdById" resultType="java.lang.String">
+        select owner from tbl_clue where id=#{id}
+    </select>
 </mapper>

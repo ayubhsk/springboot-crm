@@ -15,6 +15,7 @@ public class LoginHandler implements HandlerInterceptor {
             System.out.println("+++++++++++没有登录权限++++++++++++++++++++++");
             request.setAttribute("msg","没有登录权限");
             request.getRequestDispatcher("/index.html").forward(request,response);
+
             return false;
         }
         return true;

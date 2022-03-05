@@ -24,7 +24,6 @@
 
         })
 
-        Map<String,String> pMap = (Map<String,String>)servletContext.getAttribute("pMap");
 
         String createTime = DateTimeUtil.getSysTime();
         String createBy = ((User)request.getSession().getAttribute("user")).getName();
@@ -37,5 +36,8 @@
             todayBtn: true,
             pickerPosition: "bottom-left"
         });
+
+        pageList($("#activityPage").bs_pagination('getOption', 'currentPage'),
+        $("#activityPage").bs_pagination('getOption', 'rowsPerPage'))
 </body>
 </html>

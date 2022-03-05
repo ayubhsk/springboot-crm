@@ -5,6 +5,7 @@ import com.whx.settings.domain.DicValue;
 import com.whx.settings.domain.User;
 import com.whx.settings.service.DicService;
 import com.whx.settings.service.UserService;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
@@ -12,6 +13,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.List;
 
+
+@Component
 public class SysInitListener implements ServletContextListener {
     @Resource
     UserService userService;
