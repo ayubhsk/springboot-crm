@@ -36,5 +36,7 @@ public class SysInitListener implements ServletContextListener {
             application.setAttribute(dicType.getCode()+"List",dicValueList);
             System.out.println(dicType.getCode()+"List添加成功");
         }
+
+
     }
 }

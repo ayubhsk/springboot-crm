@@ -1,8 +1,9 @@
-package com.whx.settings.service;
+package com.whx.settings.service.impl;
 
 
 import com.whx.settings.dao.UserDao;
 import com.whx.settings.domain.User;
+import com.whx.settings.service.UserService;
 import com.whx.workbench.domain.Activity;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,6 @@ public class UserServiceImpl implements UserService {
     public List<User> getAll() {
         List<User> userList=userDao.getAll();
         return userList;
-
     }
 
 

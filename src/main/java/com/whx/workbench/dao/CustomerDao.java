@@ -10,4 +10,6 @@ public interface CustomerDao {
     int addByCustomer(Customer customer);
 
     List<String> queryCustomerNames(String name);
+
+    List<Customer> pageList(Customer customer);
 }

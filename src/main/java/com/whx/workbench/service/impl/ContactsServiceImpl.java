@@ -109,4 +109,40 @@ public class ContactsServiceImpl implements ContactsService {
 
         return msg;
     }
+
+    @Override
+    public Contacts edit(String id) {
+        Contacts contacts=contactsDao.selectById(id);
+        return contacts;
+    }
+
+    @Override
+    @Transactional
+    public boolean update(Contacts contacts, String customerName, User user) {
+        Customer customer=customerDao.selectByName(customerName);
+        String dateTime=DateTimeUtil.getSysTime();
+        //此时要添加客人
+        if(customer==null){//要新建一个客人
+            customer=new Customer();
+            customer.setId(UUIDUtil.getUUID());
+            customer.setName(customerName);
+            customer.setCreateTime(dateTime);
+            customer.setCreateBy(user.getName());
+            customer.setOwner(contacts.getOwner());
+            customer.setAddress(contacts.getAddress());
+            customer.setContactSummary(contacts.getContactSummary());
+            customer.setDescription(contacts.getDescription());
+            customer.setNextContactTime(contacts.getNextContactTime());
+            int count1=customerDao.addByCustomer(customer);
+            if(count1!=1){
+                throw new CountWrongException("添加新客户失败");
+            }
+        }
+        contacts.setCustomerId(customer.getId());
+        contacts.setEditBy(user.getName());
+        contacts.setEditTime(dateTime);
+        int cout2=contactsDao.updateContacts(contacts);
+        if(cout2!=1)  throw new CountWrongException("更新联系人失败");
+        return true;
+    }
 }

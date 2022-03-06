@@ -35,6 +35,42 @@
     </insert>
 
     <select id="queryCustomerNames" resultType="java.lang.String">
-        select name from tbl_customer where name like '%' #{name} '%'
+        select name
+        from tbl_customer
+        where name like '%' #{name} '%'
+    </select>
+
+    <select id="pageList" resultType="com.whx.workbench.domain.Customer">
+        select
+        c.id,
+        u.name as owner,
+        c.name,
+        c.website,
+        c.phone,
+        c.createBy,
+        c.createTime,
+        c.editBy,
+        c.editTime,
+        c.contactSummary,
+        c.nextContactTime,
+        c.description,
+        c.address
+        from tbl_customer c
+        join tbl_user u
+        on c.owner = u.id
+        <where>
+            <if test="name!=null and name!=''">
+                and c.name like '%' #{name} '%'
+            </if>
+            <if test="owner!=null and owner!=''">
+                and u.name like '%' #{owner} '%'
+            </if>
+            <if test="phone!=null and phone!=''">
+                and c.phone like '%' #{phone} '%'
+            </if>
+            <if test="website!=null and website!=''">
+                and c.website like '%' #{website} '%'
+            </if>
+        </where>
     </select>
 </mapper>

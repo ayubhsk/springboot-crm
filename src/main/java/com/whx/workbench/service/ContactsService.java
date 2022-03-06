@@ -16,4 +16,8 @@ public interface ContactsService {
     String save(Contacts contacts, String customerName, User user);
 
     String deleteByIds(String[] ids);
+
+    Contacts edit(String id);
+
+    boolean update(Contacts contacts, String customerName, User user);
 }

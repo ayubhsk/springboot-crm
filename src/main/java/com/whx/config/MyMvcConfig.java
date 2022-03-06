@@ -26,6 +26,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/workbench/transaction/edit.html").setViewName("workbench/transaction/edit");
         registry.addViewController("/workbench/transaction/detail.html").setViewName("workbench/transaction/detail");
         registry.addViewController("/workbench/contacts/index.html").setViewName("workbench/contacts/index");
+        registry.addViewController("/workbench/customer/index.html").setViewName("workbench/customer/index");
     }
 
 

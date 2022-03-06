@@ -56,5 +56,26 @@ public class ContactsController {
         return msg;
     }
 
+    @GetMapping("/showEdit.do")
+    public Contacts showEdit(String id){
+        Contacts contacts=contactsService.edit(id);
+
+        return contacts;
+    }
+
+    @PostMapping("/update.do")
+    public String update(Contacts contacts,String customerName,HttpSession session){
+        String msg="更新成功";
+        User user= null;
+        try {
+            user = (User) session.getAttribute("user");
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg=e.getMessage();
+        }
+        boolean flag=contactsService.update(contacts,customerName,user);
+        return msg;
+    }
+
 
 }

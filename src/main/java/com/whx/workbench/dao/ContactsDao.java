@@ -12,4 +12,9 @@ public interface ContactsDao {
 
 
     int deleteByIds(String[] ids);
+
+
+    Contacts selectById(String id);
+
+    int updateContacts(Contacts contacts);
 }
