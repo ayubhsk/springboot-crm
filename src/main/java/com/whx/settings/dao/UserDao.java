@@ -10,4 +10,6 @@ public interface UserDao {
     User login(User loginUser);
 
     List<User> getAll();
+
+    String getUserNameById(String UserId);
 }

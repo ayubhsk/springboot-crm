@@ -2,6 +2,7 @@ package com.whx.workbench.domain;
 
 public class Tran {
 
+
 	private String id;
 	private String owner;	//------------------------------外键 关联tbl_user
 	private String money;	//交易金额

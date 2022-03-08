@@ -89,6 +89,10 @@
 		pageList(1, $("#customerPage").bs_pagination('getOption', 'rowsPerPage'))
 
 	}
+
+	function goToDetail(id) {
+		window.location.href="workbench/customer/detail.do/"+id
+	}
 </script>
 </head>
 <body>
@@ -335,7 +339,7 @@
 					<th:block th:if="${session.customerInfo!=null}">
 						<tr th:each="c:${session.customerInfo.list}">
 							<td><input type="checkbox" name="xz"/></td>
-							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/customer/detail.html';" th:text="${c.name}"></a></td>
+							<td><a style="text-decoration: none; cursor: pointer;" th:onclick="goToDetail([[${c.id}]])" th:text="${c.name}"></a></td>
 							<td th:text="${c.owner}"></td>
 							<td th:text="${c.phone}"></td>
 							<td th:text="${c.website}"></td>

@@ -11,4 +11,8 @@
     <select id="getAll" resultType="com.whx.settings.domain.User">
         select * from tbl_user
     </select>
+
+    <select id="getUserNameById" resultType="java.lang.String">
+        select name from tbl_user where id=#{UserId}
+    </select>
 </mapper>

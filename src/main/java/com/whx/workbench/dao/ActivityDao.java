@@ -3,6 +3,7 @@ package com.whx.workbench.dao;
 import com.whx.workbench.domain.Activity;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,4 +36,6 @@ public interface ActivityDao {
     List<Activity> getActivityListByNameAndNotByClueId(String aname, String clueId);
 
     List<Activity> selectListLikeName(String aName);
+
+    ArrayList<Activity> selectByContactRelation(String contactsId);
 }

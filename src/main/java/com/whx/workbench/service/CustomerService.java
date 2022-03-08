@@ -6,4 +6,6 @@ import com.whx.workbench.domain.Customer;
 
 public interface CustomerService {
     PageInfo<Customer> pageList(Customer customer, Integer pageNo, Integer pageSize);
+
+    Customer detail(String id);
 }

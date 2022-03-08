@@ -12,4 +12,6 @@ public interface CustomerDao {
     List<String> queryCustomerNames(String name);
 
     List<Customer> pageList(Customer customer);
+
+    Customer selectById(String id);
 }

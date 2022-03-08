@@ -36,4 +36,8 @@
                 #{contactSummary},
                 #{nextContactTime})
     </insert>
+
+    <select id="selectByContactsId" resultType="com.whx.workbench.domain.Tran">
+        select * from tbl_tran where contactsId=#{contactsId}
+    </select>
 </mapper>

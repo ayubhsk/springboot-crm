@@ -3,23 +3,21 @@ package com.whx.workbench.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.whx.excep.CountWrongException;
+import com.whx.settings.dao.UserDao;
 import com.whx.settings.domain.User;
 import com.whx.utils.DateTimeUtil;
 import com.whx.utils.UUIDUtil;
 import com.whx.vo.PageVo;
-import com.whx.workbench.dao.ContactsActivityRelationDao;
-import com.whx.workbench.dao.ContactsDao;
-import com.whx.workbench.dao.ContactsRemarkDao;
-import com.whx.workbench.dao.CustomerDao;
-import com.whx.workbench.domain.Activity;
-import com.whx.workbench.domain.Contacts;
-import com.whx.workbench.domain.Customer;
+import com.whx.workbench.dao.*;
+import com.whx.workbench.domain.*;
 import com.whx.workbench.service.ContactsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -33,6 +31,12 @@ public class ContactsServiceImpl implements ContactsService {
     ContactsActivityRelationDao contactsActivityRelationDao;
     @Resource
     ContactsRemarkDao contactsRemarkDao;
+    @Resource
+    UserDao userDao;
+    @Resource
+    ActivityDao activityDao;
+    @Resource
+    TranDao tranDao;
 
 
     @Override
@@ -48,7 +52,6 @@ public class ContactsServiceImpl implements ContactsService {
     public List<String> getCustomerNames(String name) {
         List<String> customerNames=customerDao.queryCustomerNames(name);
         return customerNames;
-
 
     }
 
@@ -145,4 +148,60 @@ public class ContactsServiceImpl implements ContactsService {
         if(cout2!=1)  throw new CountWrongException("更新联系人失败");
         return true;
     }
+
+    @Override
+    public HashMap<Object,Object> detail(String id) {
+        HashMap<Object,Object> hashMap=new HashMap<>();
+        Contacts contacts=contactsDao.selectById(id);
+        hashMap.put("contacts",contacts);
+        ArrayList<Activity> activityList=activityDao.selectByContactRelation(id);
+        hashMap.put("activityList",activityList);
+        ArrayList<Tran> tranList=tranDao.selectByContactsId(id);
+        hashMap.put("tranList",tranList);
+        ArrayList<ContactsRemark> remarkList=contactsRemarkDao.selectByContactsId(id);
+        hashMap.put("remarkList",remarkList);
+
+        return hashMap;
+    }
+
+    @Override
+    public String getOwnerName(String ownerId) {
+        String ownerName=userDao.getUserNameById(ownerId);
+        return ownerName;
+    }
+
+    @Override
+    @Transactional
+    public Integer saveRemark(ContactsRemark contactsRemark) {
+        int count=contactsRemarkDao.addContactsRemark(contactsRemark);
+        if(count!=1) throw new CountWrongException("添加备注失败");
+
+        return count;
+    }
+
+    @Override
+    public List<ContactsRemark> loadContactsRemark(String contactsId) {
+        List<ContactsRemark> remarkList=contactsRemarkDao.selectByContactsId(contactsId);
+        return remarkList;
+    }
+
+    @Override
+    @Transactional
+    public int updateRemark(ContactsRemark remark) {
+        int count=contactsRemarkDao.update(remark);
+        if(count!=1) throw new CountWrongException("修改备注出错");
+        return 0;
+    }
+
+    @Override
+    @Transactional
+    public int deleteRemarkById(String id) {
+        int  count=contactsRemarkDao.deleteRemarkById(id);
+        if(count!=1) throw new CountWrongException("删除备注出错");
+        return count;
+
+
+    }
+
+
 }

@@ -70,6 +70,7 @@
 
         });
 
+
         function pageList(pageNo, pageSize) {
 
             $.ajax({
@@ -261,6 +262,10 @@
                     }
                 }
             })
+        }
+
+        function goToDetail(id) {
+            window.location.href='workbench/contacts/detail.do/'+id
         }
     </script>
 </head>
@@ -611,7 +616,7 @@
                     <tr th:each="c:${session.contactsInfo.list}">
                         <td><input type="checkbox" name="xz" onclick="xz()" th:value="${c.id}"/></td>
                         <td><a style="text-decoration: none; cursor: pointer;"
-                               onclick="window.location.href='workbench/contacts/detail.html';"
+                               th:onclick="goToDetail([[${c.id}]])"
                                th:text="${c.fullname}"> </a></td>
                         <td th:text="${c.customerId}"></td>
                         <td th:text="${c.owner}"></td>

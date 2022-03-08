@@ -20,7 +20,6 @@
                  nextContactTime,
                  description,
                  address)
-
         values (#{id},
                 #{owner},
                 #{name},
@@ -72,5 +71,26 @@
                 and c.website like '%' #{website} '%'
             </if>
         </where>
+        order by c.createTime desc
+    </select>
+
+    <select id="selectById" resultType="com.whx.workbench.domain.Customer">
+        select c.id,
+               u.name as owner,
+               c.name,
+               c.website,
+               c.phone,
+               c.createBy,
+               c.createTime,
+               c.editBy,
+               c.editTime,
+               c.contactSummary,
+               c.nextContactTime,
+               c.description,
+               c.address
+        from tbl_customer c
+                     join tbl_user u
+            on c.owner=u.id
+        where c.id = #{id}
     </select>
 </mapper>

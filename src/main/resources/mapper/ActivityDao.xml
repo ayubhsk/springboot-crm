@@ -175,8 +175,8 @@
                a.editTime,
                a.editBy
         from tbl_activity a
-        join tbl_user u
-        on a.owner = u.id
+                     join tbl_user u
+                on a.owner = u.id
         where (a.id not in (select activityId from tbl_clue_activity_relation where clueId = #{clueId})
                 and a.name like '%' #{aname} '%')
     </select>
@@ -194,8 +194,20 @@
                a.editTime,
                a.editBy
         from tbl_activity a
-        join tbl_user u
-        on a.owner = u.id
+                     join tbl_user u
+                on a.owner = u.id
         where a.name like '%' #{aName} '%'
+    </select>
+
+    <select id="selectByContactRelation" resultType="com.whx.workbench.domain.Activity">
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate
+        from tbl_activity a
+                     join tbl_user u
+                on a.owner = u.id
+        where a.id in (select activityId from tbl_contacts_activity_relation where contactsId = #{contactsId})
     </select>
 </mapper>

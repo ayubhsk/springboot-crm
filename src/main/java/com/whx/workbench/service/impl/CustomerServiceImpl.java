@@ -26,4 +26,11 @@ public class CustomerServiceImpl implements CustomerService {
         PageInfo<Customer> customerInfo=new PageInfo<>(list);
         return customerInfo;
     }
+
+    @Override
+    public Customer detail(String id) {
+        Customer customer=customerDao.selectById(id);
+        return customer;
+
+    }
 }
