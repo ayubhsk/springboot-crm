@@ -203,5 +203,48 @@ public class ContactsServiceImpl implements ContactsService {
 
     }
 
+    @Override
+    public List<Activity> getActivityListByNameAndNotByContactsId(String aname, String contactsId) {
+        List<Activity> list=activityDao.getActivityListByNameAndNotByContactsId(aname,contactsId);
+        return list;
+
+    }
+
+    @Override
+    public List<Activity> loadContactsActivity(String contactsId) {
+        ArrayList<Activity> activityList=activityDao.selectByContactRelation(contactsId);
+        return activityList;
+    }
+
+    @Override
+    @Transactional
+    public int bindActivitys(String[] ids,String contactsId) {
+        int count=0;
+        for (int i = 0; i <ids.length ; i++) {
+            ContactsActivityRelation car=new ContactsActivityRelation();
+            car.setId(UUIDUtil.getUUID());
+            car.setContactsId(contactsId);
+            car.setActivityId(ids[i]);
+            int temp=contactsActivityRelationDao.addRelation(car);
+            if(temp!=1){
+                throw new CountWrongException("关联市场活动失败");
+            }
+            count++;
+        }
+        return count;
+
+
+    }
+
+    @Override
+    @Transactional
+    public int unBind(String contactsId, String activityId) {
+        int count=contactsActivityRelationDao.deleteByAidAndCid(activityId,contactsId);
+        if(count!=1) throw new CountWrongException("解除关联失败");
+        return count;
+
+
+    }
+
 
 }

@@ -210,4 +210,24 @@
                 on a.owner = u.id
         where a.id in (select activityId from tbl_contacts_activity_relation where contactsId = #{contactsId})
     </select>
+
+    <select id="getActivityListByNameAndNotByContactsId" resultType="com.whx.workbench.domain.Activity">
+        select a.id,
+               u.name as owner,
+               a.name,
+               a.startDate,
+               a.endDate,
+               a.cost,
+               a.description,
+               a.createTime,
+               a.createBy,
+               a.editTime,
+               a.editBy
+        from tbl_activity a
+                     join tbl_user u
+                on a.owner = u.id
+        where (a.name like '%' #{aname} '%' and a.id not in (select activityId from tbl_contacts_activity_relation where contactsId=#{contactsId}))
+    </select>
+
+
 </mapper>

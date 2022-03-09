@@ -17,193 +17,6 @@
     <script type="text/javascript" src="jquery/bs_pagination/jquery.bs_pagination.min.js"></script>
     <script type="text/javascript" src="jquery/bs_pagination/en.js"></script>
     <script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
-    <script type="text/javascript">
-
-        //默认情况下取消和保存按钮是隐藏的
-        var cancelAndSaveBtnDefault = true;
-
-        $(function () {
-            $(".time").datetimepicker({
-                minView: "month",
-                language: 'zh-CN',
-                format: 'yyyy-mm-dd',
-                autoclose: true,
-                todayBtn: true,
-                pickerPosition: "top-left"
-
-            });
-
-            //生日
-            $(".time1").datetimepicker({
-
-                minView: "year",
-                language: 'zh-CN',
-                format: 'mm-dd',
-                autoclose: true,
-                todayBtn: true,
-                pickerPosition: "bottom-left"
-            });
-
-            //自动补全顾客姓名
-            $(".completionCustomerName").typeahead({
-                source: function (query, process) {
-                    $.get(
-                        "workbench/contacts/getCustomerName.do",
-                        {"name": query},
-                        function (data) {
-
-                            process(data);
-                        },
-                        "json"
-                    );
-                },
-                delay: 500
-            });
-
-            $("#remark").focus(function () {
-                if (cancelAndSaveBtnDefault) {
-                    //设置remarkDiv的高度为130px
-                    $("#remarkDiv").css("height", "130px");
-                    //显示
-                    $("#cancelAndSaveBtn").show("2000");
-                    cancelAndSaveBtnDefault = false;
-                }
-            });
-
-            $("#cancelBtn").click(function () {
-                //显示
-                $("#cancelAndSaveBtn").hide();
-                //设置remarkDiv的高度为130px
-                $("#remarkDiv").css("height", "90px");
-                cancelAndSaveBtnDefault = true;
-            });
-
-            $(".remarkDiv").mouseover(function () {
-                $(this).children("div").children("div").show();
-            });
-
-            $(".remarkDiv").mouseout(function () {
-                $(this).children("div").children("div").hide();
-            });
-
-            $(".myHref").mouseover(function () {
-                $(this).children("span").css("color", "red");
-            });
-
-            $(".myHref").mouseout(function () {
-                $(this).children("span").css("color", "#E6E6E6");
-            });
-
-			//页面加载完备后，加载备注信息
-			$("#remarkBody").on("mouseover",".remarkDiv",function(){
-				$(this).children("div").children("div").show();
-			})
-			$("#remarkBody").on("mouseout",".remarkDiv",function(){
-				$(this).children("div").children("div").hide();
-			})
-
-        });
-
-        //取出所有的备注存放到session里吗并且刷新页面
-        function loadRemark() {
-			$.ajax({
-				url : "workbench/contacts/loadContactsRemark.do",
-				data : {
-					"contactsId": '[[${session.contactsDetail.id}]]'
-				},
-				type : "get",
-				dataType : "json",
-				success : function (data) {
-					if(data){
-						var base = document.getElementById("base").getAttribute("href")
-						$("#loadRemark").load(base + "workbench/contacts/detail.html #loadRemark");
-					}
-				}
-
-			})
-
-        }
-
-        function loadTran() {
-            var base = document.getElementById("base").getAttribute("href")
-            $("#loadTran").load(base + "workbench/contacts/detail.html #loadTran");
-        }
-
-        function loadActivity() {
-            var base = document.getElementById("base").getAttribute("href")
-            $("#loadActivity").load(base + "workbench/contacts/detail.html #loadActivity");
-        }
-
-        function saveRemarkBtnClick() {
-            var noteContent = $("#remark").val()
-            $.ajax({
-                url: "workbench/contacts/saveRemark.do",
-                data: {
-                    "noteContent": noteContent,
-                    "contactsId": '[[${session.contactsDetail.id}]]'
-                },
-                type: "get",
-                dataType: "text",
-                success: function (msg) {
-                    alert(msg)
-                    if ("添加备注成功" == msg) {
-                        loadRemark()
-                    }
-                }
-
-            })
-        }
-
-        function editRemark(id) {
-            var remarkId = id
-            var noteContent = $("#" + remarkId).html()
-            $("#remarkNoteContent").val(noteContent)
-            $("#remarkId").val(remarkId)
-            $("#editRemarkModal").modal("show")
-        }
-
-        function updateRemarkBtnClick() {
-            var remarkId = $("#remarkId").val()
-            var noteContent = $.trim($("#remarkNoteContent").val())
-			$.ajax({
-
-				url : "workbench/contacts/updateRemark.do",
-				data : {
-					"id":remarkId,
-					"noteContent":noteContent
-				},
-				type : "get",
-				dataType : "text",
-				success : function (msg) {
-					alert(msg)
-					if("修改备注成功"==msg){
-						loadRemark()
-					}
-				}
-
-			})
-        }
-
-        function deleteRemark(id) {
-        	var remarkId=id
-			$.ajax({
-				url : "workbench/contacts/deleteRemark.do",
-				data : {
-					"id":id
-				},
-				type : "get",
-				dataType : "text",
-				success : function (msg) {
-					alert(msg)
-					if("删除备注成功"==msg){
-						$("#r"+id).remove()
-					}
-
-				}
-
-			})
-		}
-    </script>
 
 </head>
 <body>
@@ -275,7 +88,7 @@
                     <form class="form-inline" role="form">
                         <div class="form-group has-feedback">
                             <input type="text" class="form-control" style="width: 300px;"
-                                   placeholder="请输入市场活动名称，支持模糊查询">
+                                   placeholder="请输入市场活动名称，支持模糊查询" id="aname" >
                             <span class="glyphicon glyphicon-search form-control-feedback"></span>
                         </div>
                     </form>
@@ -284,7 +97,7 @@
                        style="width: 900px; position: relative;top: 10px;">
                     <thead>
                     <tr style="color: #B3B3B3;">
-                        <td><input type="checkbox"/></td>
+                        <td><input id="qx" onclick="qx()" type="checkbox"/></td>
                         <td>名称</td>
                         <td>开始日期</td>
                         <td>结束日期</td>
@@ -292,27 +105,20 @@
                         <td></td>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
+                    <tbody id="activitySearchBody">
+<!--                    <tr>
                         <td><input type="checkbox"/></td>
                         <td>发传单</td>
                         <td>2020-10-10</td>
                         <td>2020-10-20</td>
                         <td>zhangsan</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"/></td>
-                        <td>发传单</td>
-                        <td>2020-10-10</td>
-                        <td>2020-10-20</td>
-                        <td>zhangsan</td>
-                    </tr>
+                    </tr>-->
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">关联</button>
+                <button type="button" class="btn btn-primary" id="bindBtn" onclick="bindBtnClick()">关联</button>
             </div>
         </div>
     </div>
@@ -636,19 +442,19 @@
         </div>
 
         <div>
-            <a href="transaction/save.html" style="text-decoration: none;"><span
+            <a href="workbench/transaction/save.html" style="text-decoration: none;"><span
                     class="glyphicon glyphicon-plus"></span>新建交易</a>
         </div>
     </div>
 </div>
 
 <!-- 市场活动 -->
-<div>
+<div >
     <div style="position: relative; top: 60px; left: 40px;">
         <div class="page-header">
             <h4>市场活动</h4>
         </div>
-        <div style="position: relative;top: 0px;">
+        <div style="position: relative;top: 0px;" id="loadActivity">
             <table id="activityTable" class="table table-hover" style="width: 900px;">
                 <thead>
                 <tr style="color: #B3B3B3;">
@@ -659,7 +465,7 @@
                     <td></td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody >
                 <th:block th:if="${session.activityList!=null}">
                     <tr th:each="a:${session.activityList}">
                         <td><a href="activity/detail.html" style="text-decoration: none;" th:text="${a.name}">发传单</a>
@@ -667,9 +473,10 @@
                         <td th:text="${a.startDate}">2020-10-10</td>
                         <td th:text="${a.endDate}">2020-10-20</td>
                         <td th:text="${a.owner}"></td>
-                        <td><a href="javascript:void(0);" data-toggle="modal" data-target="#unbundActivityModal"
-                               style="text-decoration: none;"><span class="glyphicon glyphicon-remove"></span>解除关联</a>
+                        <td><a href="javascript:void(0);"
+                               style="text-decoration: none;" id="unBindBtn" th:onclick="unBindBtnClick([[${a.id}]])"><span class="glyphicon glyphicon-remove"></span>解除关联</a>
                         </td>
+                        <!--data-toggle="modal" data-target="#unbundActivityModal"-->
                     </tr>
                 </th:block>
                 </tbody>
@@ -677,7 +484,7 @@
         </div>
 
         <div>
-            <a href="javascript:void(0);" data-toggle="modal" data-target="#bundActivityModal"
+            <a href="javascript:void(0);"  data-toggle="modal" data-target="#bundActivityModal"
                style="text-decoration: none;"><span class="glyphicon glyphicon-plus"></span>关联市场活动</a>
         </div>
     </div>
@@ -686,4 +493,303 @@
 
 <div style="height: 200px;"></div>
 </body>
+
+<script type="text/javascript">
+
+    //默认情况下取消和保存按钮是隐藏的
+    var cancelAndSaveBtnDefault = true;
+
+    $(function () {
+        $(".time").datetimepicker({
+            minView: "month",
+            language: 'zh-CN',
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: "top-left"
+
+        });
+
+        //生日
+        $(".time1").datetimepicker({
+
+            minView: "year",
+            language: 'zh-CN',
+            format: 'mm-dd',
+            autoclose: true,
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        });
+
+        //自动补全顾客姓名
+        $(".completionCustomerName").typeahead({
+            source: function (query, process) {
+                $.get(
+                    "workbench/contacts/getCustomerName.do",
+                    {"name": query},
+                    function (data) {
+
+                        process(data);
+                    },
+                    "json"
+                );
+            },
+            delay: 500
+        });
+
+        $("#remark").focus(function () {
+            if (cancelAndSaveBtnDefault) {
+                //设置remarkDiv的高度为130px
+                $("#remarkDiv").css("height", "130px");
+                //显示
+                $("#cancelAndSaveBtn").show("2000");
+                cancelAndSaveBtnDefault = false;
+            }
+        });
+
+        $("#cancelBtn").click(function () {
+            //显示
+            $("#cancelAndSaveBtn").hide();
+            //设置remarkDiv的高度为130px
+            $("#remarkDiv").css("height", "90px");
+            cancelAndSaveBtnDefault = true;
+        });
+
+        $(".remarkDiv").mouseover(function () {
+            $(this).children("div").children("div").show();
+        });
+
+        $(".remarkDiv").mouseout(function () {
+            $(this).children("div").children("div").hide();
+        });
+
+        $(".myHref").mouseover(function () {
+            $(this).children("span").css("color", "red");
+        });
+
+        $(".myHref").mouseout(function () {
+            $(this).children("span").css("color", "#E6E6E6");
+        });
+
+        //页面加载完备后，加载备注信息
+        $("#remarkBody").on("mouseover",".remarkDiv",function(){
+            $(this).children("div").children("div").show();
+        })
+        $("#remarkBody").on("mouseout",".remarkDiv",function(){
+            $(this).children("div").children("div").hide();
+        })
+
+        $("#aname").keydown(function (event) {
+            //如果是回车键
+            if(event.keyCode==13){
+                //alert("查询并展现市场活动列表");
+                $.ajax({
+                    url : "workbench/contacts/getActivityListByNameAndNotByContactsId.do",
+                    data : {
+                        "aname" : $.trim($("#aname").val()),
+                        "contactsId" : "[[${session.contactsDetail.id}]]"
+                    },
+                    type : "get",
+                    dataType : "json",
+                    success : function (data) {
+                        var html = "";
+                        $.each(data,function (i,n) {
+                            html += '<tr>';
+                            html += '<td><input type="checkbox" name="xz" onclick="xz()" value="'+n.id+'"/></td>';
+                            html += '<td>'+n.name+'</td>';
+                            html += '<td>'+n.startDate+'</td>';
+                            html += '<td>'+n.endDate+'</td>';
+                            html += '<td>'+n.owner+'</td>';
+                            html += '</tr>';
+
+                        })
+
+                        $("#activitySearchBody").html(html);
+                    }
+                })
+
+                //展现完列表后，记得将模态窗口默认的回车行为禁用掉
+                return false;
+
+            }
+
+        })
+
+    });
+
+    function xz() {
+        $("#qx").prop("checked",$("input[name=xz]:checked").length==$("input[name=xz]").length)
+    }
+
+    function qx() {
+        $("input[name=xz]").prop("checked",$("#qx").prop("checked"))
+    }
+
+    //取出所有的备注存放到session里吗并且刷新页面
+    function loadRemark() {
+        $.ajax({
+            url : "workbench/contacts/loadContactsRemark.do",
+            data : {
+                "contactsId": '[[${session.contactsDetail.id}]]'
+            },
+            type : "get",
+            dataType : "json",
+            success : function (data) {
+                if(data){
+                    var base = document.getElementById("base").getAttribute("href")
+                    $("#loadRemark").load(base + "workbench/contacts/detail.html #loadRemark");
+                }
+            }
+
+        })
+
+    }
+
+    function loadTran() {
+        var base = document.getElementById("base").getAttribute("href")
+        $("#loadTran").load(base + "workbench/contacts/detail.html #loadTran");
+    }
+
+    function loadActivity() {
+        $.ajax({
+            url : "workbench/contacts/loadContactsActivity.do",
+            data : {
+                "contactsId": '[[${session.contactsDetail.id}]]'
+            },
+            type : "get",
+            dataType : "json",
+            success : function (data) {
+                if(data){
+                    var base = document.getElementById("base").getAttribute("href")
+                    $("#loadActivity").load(base + "workbench/contacts/detail.html #loadActivity");
+                }
+            }
+
+        })
+
+    }
+
+    function saveRemarkBtnClick() {
+        var noteContent = $("#remark").val()
+        $.ajax({
+            url: "workbench/contacts/saveRemark.do",
+            data: {
+                "noteContent": noteContent,
+                "contactsId": '[[${session.contactsDetail.id}]]'
+            },
+            type: "get",
+            dataType: "text",
+            success: function (msg) {
+                alert(msg)
+                if ("添加备注成功" == msg) {
+                    loadRemark()
+                }
+            }
+
+        })
+    }
+
+    function editRemark(id) {
+        var remarkId = id
+        var noteContent = $("#" + remarkId).html()
+        $("#remarkNoteContent").val(noteContent)
+        $("#remarkId").val(remarkId)
+        $("#editRemarkModal").modal("show")
+    }
+
+    function updateRemarkBtnClick() {
+        var remarkId = $("#remarkId").val()
+        var noteContent = $.trim($("#remarkNoteContent").val())
+        $.ajax({
+
+            url : "workbench/contacts/updateRemark.do",
+            data : {
+                "id":remarkId,
+                "noteContent":noteContent
+            },
+            type : "get",
+            dataType : "text",
+            success : function (msg) {
+                alert(msg)
+                if("修改备注成功"==msg){
+                    loadRemark()
+                }
+            }
+
+        })
+    }
+
+    function deleteRemark(id) {
+        var remarkId=id
+        $.ajax({
+            url : "workbench/contacts/deleteRemark.do",
+            data : {
+                "id":id
+            },
+            type : "get",
+            dataType : "text",
+            success : function (msg) {
+                alert(msg)
+                if("删除备注成功"==msg){
+                    $("#r"+id).remove()
+                }
+
+            }
+
+        })
+    }
+
+    function bindBtnClick() {
+        $xz=$("input[name=xz]:checked")
+        if($xz.length<=0){
+            alert("至少选择一个市场活动")
+            return
+        }
+        var param=$xz.val()
+        for (let i = 1 ; i <$xz.length ; i++) {
+            param+=","+$xz[i].value
+        }
+        $.ajax({
+
+            url : "workbench/contacts/bindActivitys.do",
+            data : {
+                "ids":param,
+                "contactsId": '[[${session.contactsDetail.id}]]'
+            },
+            type : "post",
+            dataType : "text",
+            success : function (msg) {
+                alert(msg)
+                if("关联市场活动成功"==msg){
+                    loadActivity()
+                    $("#bundActivityModal").modal("hide")
+                }
+            }
+
+        })
+
+
+    }
+    function unBindBtnClick(activityId) {
+        $.ajax({
+
+            url : "workbench/contacts/unBind.do",
+            data : {
+                "activityId":activityId,
+                "contactsId": '[[${session.contactsDetail.id}]]'
+            },
+            type : "post",
+            dataType : "text",
+            success : function (msg) {
+                alert(msg)
+                if("解除关联成功"==msg){
+                    loadActivity()
+                }
+            }
+
+        })
+    }
+
+
+</script>
 </html>

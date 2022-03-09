@@ -35,4 +35,12 @@ public interface ContactsService {
     int updateRemark(ContactsRemark remark);
 
     int deleteRemarkById(String id);
+
+    List<Activity> getActivityListByNameAndNotByContactsId(String aname, String contactsId);
+
+    List<Activity> loadContactsActivity(String contactsId);
+
+    int bindActivitys(String[] ids,String contactsId);
+
+    int unBind(String contactsId, String activityId);
 }

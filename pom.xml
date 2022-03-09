@@ -8,6 +8,8 @@
         <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+
     <groupId>com.whx</groupId>
     <artifactId>springboot-crm</artifactId>
     <version>1.0.0</version>
@@ -53,10 +55,43 @@
     </dependencies>
 
     <build>
+        <!--打包后的文件名称-->
+        <finalName>springb-crm</finalName>
+        <!--加入resources插件 -->
+        <!--指定编译jsp到META-INF/resources-->
+        <resources>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <targetPath>META-INF/resources</targetPath>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+
+            <!--如果使用mybatis，同时把xml文件放在了src/main/java目录-->
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+
+
+            <!--把src/main/resources中的所有文件编译到classpath目录中-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--打包jar， 有jsp文件时，必须指定maven-plugin插件的版本是 1.4.2.RELEASE-->
+                <version>1.4.2.RELEASE</version>
             </plugin>
         </plugins>
     </build>

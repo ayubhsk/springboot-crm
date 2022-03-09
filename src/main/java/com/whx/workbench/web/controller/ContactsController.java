@@ -99,7 +99,7 @@ public class ContactsController {
 
         /*        session.setAttribute("contactsDetailMap", hashMap);*/
 
-        mv.setViewName("/workbench/contacts/detail");
+        mv.setViewName("workbench/contacts/detail");
         return mv;
     }
 
@@ -130,6 +130,14 @@ public class ContactsController {
         return true;
     }
 
+    @GetMapping("/loadContactsActivity.do")
+    public boolean loadContactsActivity(HttpSession session, String contactsId) {
+        List<Activity> activityList = contactsService.loadContactsActivity(contactsId);
+        session.setAttribute("activityList", activityList);
+        return true;
+    }
+
+
     @GetMapping("/updateRemark.do")
     public String updateRemark(ContactsRemark remark, HttpSession session) {
         String msg = "修改备注成功";
@@ -149,7 +157,37 @@ public class ContactsController {
     public String deleteRemark(String id) {
         String msg = "删除备注成功";
         try {
-            int count=contactsService.deleteRemarkById(id);
+            int count = contactsService.deleteRemarkById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg = e.getMessage();
+        }
+        return msg;
+    }
+
+    @GetMapping("/getActivityListByNameAndNotByContactsId.do")
+    public List<Activity> getActivityListByNameAndNotByContactsId(String aname, String contactsId) {
+        List<Activity> list = contactsService.getActivityListByNameAndNotByContactsId(aname, contactsId);
+        return list;
+    }
+
+    @PostMapping("/bindActivitys.do")
+    public String bindActivitys(String[] ids,String contactsId){
+        String msg="关联市场活动成功";
+        try {
+            int count=contactsService.bindActivitys(ids,contactsId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg=e.getMessage();
+        }
+        return msg;
+    }
+
+    @PostMapping("/unBind.do")
+    public String unBind(String contactsId,String activityId){
+        String msg="解除关联成功";
+        try {
+            int count=contactsService.unBind(contactsId,activityId);
         } catch (Exception e) {
             e.printStackTrace();
             msg=e.getMessage();

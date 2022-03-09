@@ -53,7 +53,7 @@ public class ClueController {
 
         String ownerId=clueService.getOwnerIdBy(id);
         model.addAttribute("ownerId",ownerId);
-        return "/workbench/clue/detail";
+        return "workbench/clue/detail";
     }
 
     @PostMapping("/delete.do")
@@ -95,13 +95,13 @@ public class ClueController {
     }
 
 
-    @PostMapping("bundActivity.do")
+    @PostMapping("/bundActivity.do")
     @ResponseBody
     public boolean bundActivity(String[] ids,String clueId){
         boolean flag=clueService.bundActivity(ids,clueId);
         return flag;
     }
-    @GetMapping("unbund.do")
+    @GetMapping("/unbund.do")
     @ResponseBody
     public boolean unbund(String activityId,String clueId){
         boolean flag=clueService.unbund(activityId,clueId);

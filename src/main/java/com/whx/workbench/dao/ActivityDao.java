@@ -38,4 +38,8 @@ public interface ActivityDao {
     List<Activity> selectListLikeName(String aName);
 
     ArrayList<Activity> selectByContactRelation(String contactsId);
+
+    List<Activity> getActivityListByNameAndNotByContactsId(@Param("aname") String aname, @Param("contactsId") String contactsId);
+
+
 }

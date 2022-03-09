@@ -12,4 +12,8 @@
                 #{cid}
             </foreach>
     </delete>
+
+    <delete id="deleteByAidAndCid">
+        delete from tbl_contacts_activity_relation where activityId=#{activityId} and contactsId=#{contactsId}
+    </delete>
 </mapper>

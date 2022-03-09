@@ -30,7 +30,7 @@ public class CustomerController {
     public ModelAndView detail(@PathVariable("id") String id, ModelAndView mv){
         Customer customer=customerService.detail(id);
         mv.addObject("c",customer);
-        mv.setViewName("/workbench/customer/detail");
+        mv.setViewName("workbench/customer/detail");
         return mv;
     }
 }
