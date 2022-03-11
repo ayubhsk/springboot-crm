@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class SpringbootCrmApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(SpringbootCrmApplication.class, args);
-        String[] names = run.getBeanDefinitionNames();
+/*        String[] names = run.getBeanDefinitionNames();
         for(String name:names){
             System.out.println(name);
-        }
+        }*/
 
     }
 

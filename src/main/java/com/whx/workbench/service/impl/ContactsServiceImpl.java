@@ -246,5 +246,12 @@ public class ContactsServiceImpl implements ContactsService {
 
     }
 
+    @Override
+    public Contacts getContactsById(String contactsId) {
+        Contacts contacts=contactsDao.selectById(contactsId);
+        return contacts;
+
+    }
+
 
 }

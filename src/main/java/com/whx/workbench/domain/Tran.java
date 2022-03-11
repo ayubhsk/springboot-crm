@@ -1,5 +1,10 @@
 package com.whx.workbench.domain;
 
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("tbl_tran")
 public class Tran {
 
 
@@ -7,19 +12,29 @@ public class Tran {
 	private String owner;	//------------------------------外键 关联tbl_user
 	private String money;	//交易金额
 	private String name;	//交易名称
+	@TableField("expectedDate")
 	private String expectedDate;	//预计成交日期
+	@TableField("customerId")
 	private String customerId;	//------------------------------外键 关联tbl_customer
 	private String stage;	//交易阶段
 	private String type;	//交易类型
 	private String source;	//交易来源
+	@TableField("activityId")
 	private String activityId;	//------------------------------外键 关联tbl_activity
+	@TableField("contactsId")
 	private String contactsId;	//------------------------------外键 关联tbl_contacts
+	@TableField("createBy")
 	private String createBy;
+	@TableField("createTime")
 	private String createTime;
+	@TableField("editBy")
 	private String editBy;
+	@TableField("editTime")
 	private String editTime;
 	private String description;
+	@TableField("contactSummary")
 	private String contactSummary;	//联系纪要
+	@TableField("nextContactTime")
 	private String nextContactTime;	//下次联系时间
 
 	private String possibility;	//可能性

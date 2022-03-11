@@ -43,4 +43,6 @@ public interface ContactsService {
     int bindActivitys(String[] ids,String contactsId);
 
     int unBind(String contactsId, String activityId);
+
+    Contacts getContactsById(String contactsId);
 }

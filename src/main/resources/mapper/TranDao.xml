@@ -38,6 +38,62 @@
     </insert>
 
     <select id="selectByContactsId" resultType="com.whx.workbench.domain.Tran">
-        select * from tbl_tran where contactsId=#{contactsId}
+        select *
+        from tbl_tran
+        where contactsId = #{contactsId}
+    </select>
+
+    <select id="pageList" resultType="com.whx.workbench.domain.Tran">
+        select
+        t.id,
+        u.name as owner,
+        t.money,
+        t.name,
+        t.expectedDate,
+        c.name as customerId,
+        t.stage,
+        t.type,
+        t.source,
+        t.activityId,
+        con.fullname as contactsId,
+        t.createBy,
+        t.createTime,
+        t.editBy,
+        t.editTime,
+        t.description,
+        t.contactSummary,
+        t.nextContactTime,
+        t.possibility
+        from tbl_tran t
+        join tbl_user u
+        on t.owner=u.id
+        join tbl_customer c
+        on t.customerId=c.id
+        join tbl_contacts con
+        on t.contactsId=con.id
+        <where>
+            <if test="owner!=null and owner!=''">
+                and u.name like '%' #{owner} '%'
+            </if>
+            <if test="name!=null and name!=''">
+                and t.name like '%' #{name} '%'
+            </if>
+            <if test="customerId!=null and customerId!=''">
+                and c.name like '%' #{customerId} '%'
+            </if>
+            <if test="stage!=null and stage!=''">
+                and t.stage like '%' #{stage} '%'
+            </if>
+            <if test="type!=null and type!=''">
+                and t.type like '%' #{type} '%'
+            </if>
+            <if test="source!=null and source!=''">
+                and t.source like '%' #{source} '%'
+            </if>
+            <if test="contactsId!=null and contactsId!=''">
+                and con.fullname like '%' #{contactsId} '%'
+            </if>
+        </where>
+        order by t.createTime desc
     </select>
 </mapper>

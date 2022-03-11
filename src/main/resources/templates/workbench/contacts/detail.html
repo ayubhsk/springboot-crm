@@ -442,7 +442,7 @@
         </div>
 
         <div>
-            <a href="workbench/transaction/save.html" style="text-decoration: none;"><span
+            <a th:href="@{/workbench/transaction/saveTran.do/(contactsId=${session.contactsDetail.id})}" style="text-decoration: none;"><span
                     class="glyphicon glyphicon-plus"></span>新建交易</a>
         </div>
     </div>
