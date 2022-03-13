@@ -1,5 +1,6 @@
 package com.whx.workbench.service.impl;
 
+import com.whx.excep.CountWrongException;
 import com.whx.vo.PageVo;
 import com.whx.workbench.dao.ActivityDao;
 import com.whx.workbench.dao.ActivityRemarkDao;
@@ -7,6 +8,7 @@ import com.whx.workbench.domain.Activity;
 import com.whx.workbench.domain.ActivityRemark;
 import com.whx.workbench.service.ActivityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -45,8 +47,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional
     public boolean save(Activity activity) {
         int count=activityDao.save(activity);
+        if(count!=1) throw new CountWrongException("保存市场活动出错");
         return count==1;
 
     }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -63,13 +64,23 @@ public class ActivityController {
 
     @GetMapping("/save.do")
     @ResponseBody
-    public boolean save(Activity activity, HttpSession session){
+    public boolean save(Activity activity, HttpSession session, HttpServletResponse response){
         String createTime= DateTimeUtil.getSysTime();
         String createBy=((User)session.getAttribute("user")).getName();
         activity.setCreateTime(createTime);
         activity.setCreateBy(createBy);
         activity.setId(UUIDUtil.getUUID());
-        boolean flag=activityService.save(activity);
+
+        boolean flag= false;
+
+/*        flag = activityService.save(activity);*/
+        try {
+            response.sendError(411,"123");
+            flag = activityService.save(activity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            flag=false;
+        }
         return flag;
     }
 

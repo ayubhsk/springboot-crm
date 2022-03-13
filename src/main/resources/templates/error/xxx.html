@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body class="error-page">
+
+<section>
+    <div class="container ">
+
+        <section class="error-wrapper text-center">
+            <h2 th:text="${status}">page not found</h2>
+            <h3 th:text="${error.message}">We Couldn’t Find This Page</h3>
+            <a class="back-btn" th:href="@{/index.html}"> Back To Home</a>
+        </section>
+
+    </div>
+</section>
+
+<!-- Placed js at the end of the document so the pages load faster -->
+
+
+
+<!--common scripts for all pages-->
+<!--<script src="js/scripts.js"></script>-->
+
+</body>
+</html>
